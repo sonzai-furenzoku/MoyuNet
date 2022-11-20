@@ -4,6 +4,9 @@ import numpy as np
 from fairseq.models.speech_to_text.xstnet import XSTNetEncoder
 from fairseq.modules import LayerNorm, MultiheadAttention
 from fairseq.models.fairseq_encoder import EncoderOut
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MoyuAttnLayer(nn.Module):
     def __init__(self, args, input_size):
@@ -29,8 +32,7 @@ class MoyuAttnLayer(nn.Module):
         ffn_layer = nn.Linear(input_size, expand_size)
         sigmoid = nn.Sigmoid()
         nn.init.xavier_uniform_(ffn_layer.weight)
-        layer_norm = LayerNorm(expand_size)
-        return nn.Sequential(ffn_layer, sigmoid, layer_norm)
+        return nn.Sequential(ffn_layer, sigmoid)
     
     def forward(self, x):
         x = self.expand_adapter(x)
@@ -66,10 +68,8 @@ class MoyuNetEncoder(XSTNetEncoder):
 
         encoder_embedding = x
         # 3. Transformer-layers
-        layer_attn_weights = []
         for layer in self.transformer_layers:
-            x, attn = layer(x, encoder_padding_mask)
-            layer_attn_weights.append(attn)
+            x = layer(x, encoder_padding_mask)
         if self.layer_norm is not None:
             x = self.layer_norm(x)
 
@@ -81,5 +81,4 @@ class MoyuNetEncoder(XSTNetEncoder):
             src_tokens=None,
             src_lengths=None,
             output_encoder_lengths=short_audio_len,
-            attn_weights=layer_attn_weights
         )

@@ -2,15 +2,14 @@
 
 TGT_LANG=$1
 MODEL_DIR=$2
-PROJ=$3
 
-DATA_PATH="must-c/en-de"
-W2V2_PATH="wav2vec_small.pt"
-SPM_PATH="spm_unigram10000_st.model"
+DATA_PATH="/data/hrsun/data/MUST-C/en-de"
+W2V2_PATH="/data/hrsun/pretrain/Speech/wav2vec_small.pt"
+SPM_PATH="/data/hrsun/data/MUST-C/en-de/spm_unigram10000_st.model"
 
 # download Wav2vec2 model
 
-export CUDA_VISIBLE_DEVICES=0,1,2,3
+export CUDA_VISIBLE_DEVICES=0,2,3
 
 # mkdir -p checkpoints
 # wget -P checkpoints https://dl.fbaipublicfiles.com/fairseq/wav2vec/wav2vec_small.pt
@@ -18,7 +17,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3
 mkdir -p ${MODEL_DIR}
 
 fairseq-train $DATA_PATH \
-    --user-dir MoyuST/MoyuST \
+    --user-dir MoyuNet \
     --task speech_to_text_triplet_with_extra_mt \
     --train-subset train_st --valid-subset dev_st \
     --config-yaml config_st.yaml \
@@ -40,7 +39,7 @@ fairseq-train $DATA_PATH \
     --keep-last-epochs 10 \
     --update-freq 2 --patience 5 \
     \
-    --no-progress-bar --log-format json --log-interval 100 \
+    --no-progress-bar --log-format json --log-interval 10 \
     --save-dir ${MODEL_DIR} \
     --ddp-backend=no_c10d --fp16 \
     \
