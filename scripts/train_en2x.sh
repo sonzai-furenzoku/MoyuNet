@@ -39,7 +39,7 @@ fairseq-train $DATA_PATH \
     --keep-last-epochs 10 \
     --update-freq 2 --patience 5 \
     \
-    --no-progress-bar --log-format json --log-interval 10 \
+    --no-progress-bar --log-format json --log-interval 100 \
     --save-dir ${MODEL_DIR} \
     --ddp-backend=no_c10d --fp16 \
     \
