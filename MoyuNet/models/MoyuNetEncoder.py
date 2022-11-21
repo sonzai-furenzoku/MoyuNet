@@ -6,7 +6,7 @@ from fairseq.modules import LayerNorm, MultiheadAttention
 from fairseq.models.fairseq_encoder import EncoderOut
 import logging
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 class MoyuAttnLayer(nn.Module):
     def __init__(self, args, input_size):
